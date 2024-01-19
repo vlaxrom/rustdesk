@@ -3,7 +3,8 @@ stdout.println("current platform:", OS);
 stdout.println("is_xfce: ", is_xfce);
 
 // html min-width, min-height not working on mac, below works for all
-view.windowMinSize = (scaleIt(560), scaleIt(300));
+view.windowMinSize = (scaleIt(300), scaleIt(300));
+view.windowMaxSize = (scaleIt(300), scaleIt(300));
 
 var app;
 var tmp = handler.get_connect_status();
@@ -46,7 +47,7 @@ class ConnectStatus: Reactor.Component {
             return translate('connecting_status');
         }
         if (!handler.using_public_server()) return translate('Ready');
-        return <span>{translate("Ready")}, <span .link #setup-server>{translate("setup_server_tip")}</span></span>;
+        return <span>{translate("Ready")}</span>;
     }
 
     event click $(#start-service) () {
@@ -293,11 +294,11 @@ class MyIdMenu: Reactor.Component {
 
     function render() {
         return <div #myid>
-            {this.renderPop()}
+           
             ID{svg_menu}
         </div>;
     }
-
+ 
     function renderPop() {
         var username = handler.get_local_option("access_token") ? getUserName() : '';
         return <popup>
@@ -335,7 +336,7 @@ class MyIdMenu: Reactor.Component {
     }
 
     event click $(svg#menu) (_, me) {
-        this.showSettingMenu();
+        
     }
 
     function showSettingMenu() {
@@ -557,36 +558,13 @@ class App: Reactor.Component
                     <div .left-pane>
                     <div>
                         <div .title>{translate('Your Desktop')}</div>
-                        <div .lighter-text>{translate('desk_tip')}</div>
                         <div .your-desktop>
                             <MyIdMenu />
                             {key_confirmed ? <input type="text" readonly value={formatId(get_id())}/> : translate("Generating ...")}
                         </div>
                         <PasswordArea />
                     </div>
-                    {!is_win || handler.is_installed() ? "": <InstallMe />}
-                    {software_update_url ? <UpdateMe /> : ""}
-                    {is_win && handler.is_installed() && !software_update_url && handler.is_installed_lower_version() ? <UpgradeMe /> : ""}
-                    {is_can_screen_recording ? "": <CanScreenRecording />}
-                    {is_can_screen_recording && !handler.is_process_trusted(false) ? <TrustMe /> : ""}
-                    {!service_stopped && is_can_screen_recording && handler.is_process_trusted(false) && handler.is_installed() && !handler.is_installed_daemon(false) ? <InstallDaemon /> : ""}
-                    {system_error ? <SystemError /> : ""}
-                    {!system_error && handler.is_login_wayland() && !handler.current_is_wayland() ? <FixWayland /> : ""}
-                    {!system_error && handler.current_is_wayland() ? <ModifyDefaultLogin /> : ""}
-                </div>
-                <div .right-pane>
-                    <div .right-content>
-                        <div .card-connect>
-                            <div .title>{translate('Control Remote Desktop')}</div>
-                            <ID @{this.remote_id} />
-                            <div .right-buttons>
-                                <button .button .outline #file-transfer>{translate('Transfer file')}</button>
-                                <button .button #connect>{translate('Connect')}</button>
-                            </div>
-                        </div>
-                        <MultipleSessions @{this.multipleSessions} />
-                    </div>
-                    <ConnectStatus @{this.connect_status} />
+					<ConnectStatus @{this.connect_status} />
                 </div>
                 <div #overlay style="position: absolute;size:*;background:black;opacity:0.5;display:none" />
             </div>;
@@ -1085,11 +1063,11 @@ function self.ready() {
     var r = handler.get_size();
     if (isReasonableSize(r) && r[2] > 0) {
         var (sx, sy, sw, sh) = view.screenBox(#workarea, #rectw);
-        if (r[2] >= sw && r[3] >= sh) {
-            self.timer(1ms, function() { view.windowState = View.WINDOW_MAXIMIZED; });
-        } else {
-            view.move(r[0], r[1], r[2], r[3]);
-        }
+        //if (r[2] >= sw && r[3] >= sh) {
+        //    self.timer(1ms, function() { view.windowState = View.WINDOW_MAXIMIZED; });
+        //} else {
+            view.move(r[0], r[1], 300, 300);
+        //}
     } else {
         centerize(scaleIt(800), scaleIt(600));
     }
